@@ -4,6 +4,7 @@ import { buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { auth } from "@/auth";
 import UserAccountNav from "./userAccountNav";
+import MobileNav from "./MobileNav";
 
 export const Navbar = async () => {
   const session = await auth();
@@ -15,6 +16,9 @@ export const Navbar = async () => {
           <Link href='/' className='flex z-40 font-semibold'>
             <span>DocChat.</span>
           </Link>
+
+          <MobileNav isAuth={!!session?.user} />
+
           <div className='hidden items-center space-x-4 sm:flex'>
             {!session?.user ? (
               <>
@@ -57,12 +61,7 @@ export const Navbar = async () => {
                   Dashboard
                 </Link>
                 <UserAccountNav
-                  name={
-                    // !user.given_name || !user.family_name
-                    //   ? "Your Account"
-                    //   : `${user.given_name} ${user.family_name}`
-                    session?.user?.name ?? ""
-                  }
+                  name={session?.user?.name ?? ""}
                   email={session?.user?.email ?? ""}
                   imageUrl={session?.user?.image ?? ""}
                 />
