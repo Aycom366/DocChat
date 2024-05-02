@@ -27,9 +27,14 @@ export const CardWrapper = ({
   headerDescription,
 }: IProps) => {
   async function providerLogin(provider: "github" | "google") {
-    signIn(provider, {
-      callbackUrl: DEFAULT_LOGIN_REDIRECT,
-    });
+    try {
+      const result = await signIn(provider, {
+        callbackUrl: DEFAULT_LOGIN_REDIRECT,
+      });
+      console.log("result", result);
+    } catch (error) {
+      console.log("error");
+    }
   }
 
   return (

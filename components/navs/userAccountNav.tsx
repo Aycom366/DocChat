@@ -69,12 +69,17 @@ const UserAccountNav = async ({
 
         <DropdownMenuItem asChild className='cursor-pointer'>
           <form
+            className='w-full'
             action={async () => {
               "use server";
               await signOut();
             }}
           >
-            <Button type='submit' variant='ghost' className='px-1 h-5'>
+            <Button
+              type='submit'
+              variant='ghost'
+              className='px-1 justify-start  w-full h-5'
+            >
               Log out
             </Button>
           </form>

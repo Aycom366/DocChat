@@ -1,9 +1,7 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import authConfig from "./auth.config";
-
-const prisma = new PrismaClient();
+import { prisma } from "./db/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   /**
@@ -15,13 +13,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
    *
    */
   adapter: PrismaAdapter(prisma),
-  callbacks: {
-    // async signIn({ user }) {
-    //   const existingUser = await getUser(user.email);
-    //   if (!existingUser || !existingUser.emailVerified) return false;
 
-    //   return true; //Allow the user to sign in
-    // },
+  /**
+   * modifying the default next auth pages
+   */
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/login",
+  },
+
+  /**
+   * Side Effects
+   */
+  events: {
+    /**
+     * update emailVerified to true if any of the social providers is linked
+     */
+    async linkAccount({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
+  callbacks: {
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;

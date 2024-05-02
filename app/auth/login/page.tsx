@@ -14,12 +14,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { ILogin, LoginSchema } from "@/schemas/login";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function Login() {
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email is already in use with different provider!"
+      : "";
 
   const form = useForm<ILogin>({
     resolver: zodResolver(LoginSchema),

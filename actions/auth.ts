@@ -1,7 +1,6 @@
 "use server";
 
 import bcryptjs from "bcryptjs";
-
 import { ILogin } from "@/schemas/login";
 import { IRegister } from "@/schemas/register";
 import { prisma } from "@/db/prisma";
@@ -42,5 +41,5 @@ export async function register(values: IRegister) {
     },
   });
 
-  return { success: "User Created" };
+  return { success: "User Created, Please Login" };
 }
