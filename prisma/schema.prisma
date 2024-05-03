@@ -21,6 +21,13 @@ model User {
   image         String?
   password      String?
   accounts      Account[]
+  files         File[]
+
+  // The @map attribute is used to define the name of the column in the database table that corresponds to a field in your Prisma schema.
+  stipeCustomerId        String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @unique @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end") //when the current subscription will end
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,4 +57,27 @@ model Account {
 
   // This means you can't have two records with the same provider and providerAccountId. This is useful when you want to ensure that each combination of certain fields is unique.
   @@id([provider, providerAccountId])
+}
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  UPLOADED
+  FAILED
+}
+
+model File {
+  id   String @id @default(cuid())
+  name String
+
+  uploadStatus UploadStatus @default(PENDING)
+
+  url String
+  key String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
