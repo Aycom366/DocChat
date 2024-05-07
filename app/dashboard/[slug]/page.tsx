@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { PdfRenderer } from "@/components/dashboard/PdfRenderer";
+import { ChatWrapper } from "@/components/dashboard/chat/ChatWrapper";
 import { getFile } from "@/lib/file";
 import { notFound, redirect } from "next/navigation";
 
@@ -30,8 +31,7 @@ const Page = async ({ params }: IProps) => {
         </section>
 
         <section className='shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0'>
-          chat wrapper
-          {/* <ChatWrapper isSubscribed={plan.isSubscribed} fileId={file.id} /> */}
+          <ChatWrapper isSubscribed fileId={file.id} />
         </section>
       </section>
     </main>
