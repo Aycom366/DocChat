@@ -6,6 +6,7 @@ import { UploadThingError } from "uploadthing/server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
+import { Pinecone } from "@pinecone-database/pinecone";
 
 const f = createUploadthing();
 
@@ -29,7 +30,7 @@ export const ourFileRouter = {
         data: {
           userId: metadata.userId!,
           key: file.key,
-          url: `https://utfs.io/f/${file.key}.pdf`,
+          url: `https://utfs.io/f/${file.key}`,
           name: file.name,
           uploadStatus: "PROCESSING",
         },
@@ -39,7 +40,7 @@ export const ourFileRouter = {
 
       try {
         // generate some pages so pinecone can index.
-        const response = await fetch(`https://utfs.io/f/${file.key}.pdf`);
+        const response = await fetch(`https://utfs.io/f/${file.key}`);
         const blob = await response.blob();
 
         //Get the pdf response to a memory
@@ -51,8 +52,10 @@ export const ourFileRouter = {
 
         const pageAmount = pageLevelDocs.length;
 
+        const pinecone = new Pinecone();
+
         //vectorize and index the entire document
-        const pineconeIndex = pinecone.Index("doc-chat");
+        const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
 
         //use this to generate the vector from the text to prepare it to ask questions
         const embeddings = new OpenAIEmbeddings({
@@ -74,6 +77,8 @@ export const ourFileRouter = {
           },
         });
       } catch (error) {
+        console.error(error);
+
         await prisma.file.update({
           data: {
             uploadStatus: "FAILED",
