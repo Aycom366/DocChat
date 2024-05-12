@@ -5,8 +5,14 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { PineconeStore } from "@langchain/pinecone";
-import { Pinecone } from "@pinecone-database/pinecone";
+import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const privateKey = process.env.SUPABASE_PRIVATE_KEY;
+if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
+
+const url = process.env.SUPABASE_URL;
+if (!url) throw new Error(`Expected env var SUPABASE_URL`);
 
 const f = createUploadthing();
 
@@ -48,23 +54,24 @@ export const ourFileRouter = {
 
         //Extract the page level text of the pdf
         //loading the content of each page in the PDF document into pageLevelDocs.
-        const pageLevelDocs = await loader.load();
+        let pageLevelDocs = await loader.load();
+        pageLevelDocs = pageLevelDocs.map((page) => ({
+          ...page,
+          fileId: createdFile.id,
+        }));
 
         const pageAmount = pageLevelDocs.length;
 
-        const pinecone = new Pinecone();
-
-        //vectorize and index the entire document
-        const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
-
-        //use this to generate the vector from the text to prepare it to ask questions
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY,
         });
 
-        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
-          pineconeIndex,
-          namespace: createdFile.id,
+        const client = createClient(url, privateKey);
+
+        await SupabaseVectorStore.fromDocuments(pageLevelDocs, embeddings, {
+          client,
+          tableName: "documents",
+          queryName: "match_documents",
         });
 
         //update the file status to success
