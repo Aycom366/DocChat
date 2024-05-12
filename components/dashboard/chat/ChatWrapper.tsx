@@ -20,7 +20,7 @@ export const ChatWrapper: React.FC<{
    * Therefore we poll the server until we get the status
    */
   useEffect(() => {
-    //getFileStatusUpload();
+    getFileStatusUpload();
 
     async function getFileStatusUpload() {
       const res = await fetch(`/api/file/file-status?fileId=${fileId}`, {

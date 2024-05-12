@@ -22,6 +22,7 @@ model User {
   password      String?
   accounts      Account[]
   files         File[]
+  messages      Message[] //each user will also have its own messages
 
   // The @map attribute is used to define the name of the column in the database table that corresponds to a field in your Prisma schema.
   stipeCustomerId        String?   @unique @map(name: "stripe_customer_id")
@@ -62,7 +63,7 @@ model Account {
 enum UploadStatus {
   PENDING
   PROCESSING
-  UPLOADED
+  SUCCESS
   FAILED
 }
 
@@ -75,9 +76,26 @@ model File {
   url String
   key String
 
+  messages Message[] //Each files will have its own messages
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id   String @id @default(cuid())
+  text String @db.Text()
+
+  isUserMessage Boolean //differentiate if user or Ai message
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+  File   File?   @relation(fields: [fileId], references: [id])
+  fileId String?
 }

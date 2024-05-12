@@ -3,6 +3,9 @@ import { prisma } from "@/db/prisma";
 import { revalidatePath } from "next/cache";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
 
 const f = createUploadthing();
 
@@ -22,7 +25,7 @@ export const ourFileRouter = {
       return { userId: user.user?.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      await prisma.file.create({
+      const createdFile = await prisma.file.create({
         data: {
           userId: metadata.userId!,
           key: file.key,
@@ -31,7 +34,55 @@ export const ourFileRouter = {
           uploadStatus: "PROCESSING",
         },
       });
+
       revalidatePath("/dashboard");
+
+      try {
+        // generate some pages so pinecone can index.
+        const response = await fetch(`https://utfs.io/f/${file.key}.pdf`);
+        const blob = await response.blob();
+
+        //Get the pdf response to a memory
+        const loader = new PDFLoader(blob);
+
+        //Extract the page level text of the pdf
+        //loading the content of each page in the PDF document into pageLevelDocs.
+        const pageLevelDocs = await loader.load();
+
+        const pageAmount = pageLevelDocs.length;
+
+        //vectorize and index the entire document
+        const pineconeIndex = pinecone.Index("doc-chat");
+
+        //use this to generate the vector from the text to prepare it to ask questions
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY,
+        });
+
+        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: createdFile.id,
+        });
+
+        //update the file status to success
+        await prisma.file.update({
+          data: {
+            uploadStatus: "SUCCESS",
+          },
+          where: {
+            id: createdFile.id,
+          },
+        });
+      } catch (error) {
+        await prisma.file.update({
+          data: {
+            uploadStatus: "FAILED",
+          },
+          where: {
+            id: createdFile.id,
+          },
+        });
+      }
     }),
 } satisfies FileRouter;
 
