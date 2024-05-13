@@ -10,6 +10,14 @@ A vector database is a collection of data stored as mathematical representations
 
 1536 as the dimensions because OpenAi (used for the semantics) always return back an array that consists of 1536 array of number
 
+## Streaming Response
+
+```bash
+npm i ai
+```
+
+The Vercel AI SDK is a library for building AI-powered streaming text and chat UIs. It provides a simple API for interacting with OpenAI's GPT-3 and other AI models.
+
 ## LangChain
 
 ### Terms
