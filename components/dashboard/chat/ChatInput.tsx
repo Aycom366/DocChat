@@ -2,11 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { useRef } from "react";
+import { useChatContext } from "./ChatContext";
 
 export const ChatInput: React.FC<{ isDisabled?: boolean }> = ({
   isDisabled,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { addMessage, handleInputChange, isLoading, message } =
+    useChatContext();
 
   return (
     <section className='absolute bottom-0 left-0 w-full'>
@@ -19,14 +22,15 @@ export const ChatInput: React.FC<{ isDisabled?: boolean }> = ({
                 ref={textareaRef}
                 maxRows={4}
                 autoFocus
-                // onChange={handleInputChange}
-                // value={message}
+                onChange={handleInputChange}
+                value={message}
                 onKeyDown={(e) => {
+                  /**
+                   * If the user presses enter without shift key
+                   */
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-
-                    // addMessage();
-
+                    addMessage();
                     textareaRef.current?.focus();
                   }
                 }}
@@ -35,12 +39,11 @@ export const ChatInput: React.FC<{ isDisabled?: boolean }> = ({
               />
 
               <Button
-                // disabled={isLoading || isDisabled}
+                disabled={isLoading || isDisabled}
                 className='absolute bottom-1.5 right-[8px]'
                 aria-label='send message'
                 onClick={() => {
-                  // addMessage();
-
+                  addMessage();
                   textareaRef.current?.focus();
                 }}
               >

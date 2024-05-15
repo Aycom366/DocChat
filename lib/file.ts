@@ -1,5 +1,7 @@
 import { prisma } from "@/db/prisma";
 
+export const INFINITE_QUERY_LIMIT = 10;
+
 export const getFiles = async (userId: string) => {
   const files = await prisma.file.findMany({
     where: {

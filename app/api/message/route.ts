@@ -4,8 +4,73 @@ import { openai } from "@/lib/openai";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { createClient } from "@supabase/supabase-js";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
+import { INFINITE_QUERY_LIMIT } from "@/lib/file";
+
+export const GET = async (req: NextRequest) => {
+  try {
+    const fileId = req.nextUrl.searchParams.get("fileId") as string;
+    const cursor = req.nextUrl.searchParams.get("cursor");
+    const limit = Number(req.nextUrl.searchParams.get("limit")) as number;
+
+    const session = await auth();
+
+    const newLimit = limit ?? INFINITE_QUERY_LIMIT;
+
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: session?.user?.id,
+      },
+    });
+
+    if (!file)
+      return Response.json({ message: "File not found" }, { status: 404 });
+
+    const messages = await prisma.message.findMany({
+      take: newLimit + 1,
+      where: {
+        fileId,
+        userId: session?.user?.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      cursor: cursor ? { id: cursor } : undefined,
+      select: {
+        id: true,
+        isUserMessage: true,
+        createdAt: true,
+        text: true,
+      },
+    });
+
+    //determine the next cursor
+    let nextCursor: typeof cursor | undefined = undefined;
+    if (messages.length > newLimit) {
+      /**
+       * If the length of the messages is greater than the limit
+       * messages.pop() will return the last item in the array
+       * which is the next item to be displayed
+       * and the reason we can do this is because of the take(newLimit + 1)
+       */
+      const nextItem = messages.pop();
+      nextCursor = nextItem?.id;
+    }
+
+    return NextResponse.json({
+      messages,
+      nextCursor,
+      hasNextPage: Boolean(nextCursor),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "An error has occured" },
+      { status: 500 }
+    );
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
@@ -33,7 +98,6 @@ export const POST = async (req: NextRequest) => {
   });
 
   //vectorize message
-
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
@@ -50,6 +114,9 @@ export const POST = async (req: NextRequest) => {
     filter: { fileId: body.fileId },
   });
 
+  /**
+   * This argument specifies the number of most similar items to return in the search results. In this case, the function will search the  vectorStore for items with vector representations most similar to body.message and return only the top 4 most similar ones.
+   */
   const results = await vectorStore.similaritySearch(body.message, 4);
 
   //displays previous messages
@@ -71,6 +138,7 @@ export const POST = async (req: NextRequest) => {
     model: "gpt-3.5-turbo",
     temperature: 0,
     stream: true,
+
     //attached all messages, for referencing
     messages: [
       {

@@ -77,7 +77,10 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
         const res = await startUpload(acceptedFile);
 
         //If the request fails, show an error message
-        if (!res) return toast.error("Error uploading file");
+        if (!res) {
+          setIsUploading(false);
+          return toast.error("Error uploading file");
+        }
 
         //If the request is successful, get the response
         const [fileResponse] = res;
@@ -93,7 +96,6 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
          * after the upload is complete
          * redirect to the pdf page
          */
-        console.log("I got here o");
         setUploadThingKey(key);
       }}
       multiple={false}

@@ -168,7 +168,7 @@ export const PdfRenderer: React.FC<{ url: string }> = ({ url }) => {
         </div>
       </div>
       <div className='flex-1 w-full max-h-screen'>
-        <SimpleBar autoHide={false} className='max-h-[calc(100vh-10rem)]'>
+        <SimpleBar autoHide={false} className='max-h-[calc(100dvh-10rem)]'>
           <div ref={ref}>
             <Document
               onLoadError={() => {

@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ChatInput } from "./ChatInput";
-import { Messages } from "./Message";
+import { Messages } from "./Messages";
 import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { ChatProvider } from "./ChatContext";
 
 export const ChatWrapper: React.FC<{
   fileId: string;
@@ -105,12 +106,14 @@ export const ChatWrapper: React.FC<{
     );
 
   return (
-    <section className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>
-      <div className='flex-1 justify-between flex flex-col mb-28'>
-        <Messages fileId={fileId} />
-      </div>
+    <ChatProvider fileId={fileId}>
+      <section className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>
+        <div className='flex-1 justify-between flex flex-col mb-28'>
+          <Messages fileId={fileId} />
+        </div>
 
-      <ChatInput />
-    </section>
+        <ChatInput />
+      </section>
+    </ChatProvider>
   );
 };

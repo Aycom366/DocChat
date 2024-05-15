@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { OpenAIEmbeddings, OpenAI } from "@langchain/openai";
+import { OpenAIEmbeddings } from "@langchain/openai";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { createClient } from "@supabase/supabase-js";
 
@@ -55,10 +55,12 @@ export const ourFileRouter = {
         //Extract the page level text of the pdf
         //loading the content of each page in the PDF document into pageLevelDocs.
         let pageLevelDocs = await loader.load();
-        pageLevelDocs = pageLevelDocs.map((page) => ({
-          ...page,
-          fileId: createdFile.id,
-        }));
+        pageLevelDocs = pageLevelDocs.map((page) => {
+          return {
+            ...page,
+            metadata: { ...page.metadata, fileId: createdFile.id },
+          };
+        });
 
         const pageAmount = pageLevelDocs.length;
 
