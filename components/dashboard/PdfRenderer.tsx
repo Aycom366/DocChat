@@ -34,7 +34,6 @@ import { PdfFullscreen } from "./PdfFullScreen";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export const PdfRenderer: React.FC<{ url: string }> = ({ url }) => {
-  url = url.replace(/\.pdf$/, "");
   const { width, ref } = useResizeDetector();
   const [numPages, setNumPages] = useState<number | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,7 +168,7 @@ export const PdfRenderer: React.FC<{ url: string }> = ({ url }) => {
         </div>
       </div>
       <div className='flex-1 w-full max-h-screen'>
-        <SimpleBar autoHide={false} className='max-h-[calc(100vh-10rem)]'>
+        <SimpleBar autoHide={false} className='max-h-[calc(100dvh-10rem)]'>
           <div ref={ref}>
             <Document
               onLoadError={() => {

@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navs";
 import { Toaster } from "@/components/ui/sonner";
+import { TanstackProvider } from "@/providers/tanstack-query";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,18 +16,20 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang='en' className='light'>
-      <body
-        className={cn(
-          "min-h-screen font-sans antialiased grainy",
-          inter.className
-        )}
-      >
-        <Navbar />
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <TanstackProvider>
+      <html lang='en' className='light'>
+        <body
+          className={cn(
+            "min-h-screen font-sans antialiased grainy",
+            inter.className
+          )}
+        >
+          <Navbar />
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </TanstackProvider>
   );
 };
 
