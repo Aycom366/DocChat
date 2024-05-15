@@ -32,7 +32,6 @@ export interface IMessageResponse {
 }
 
 const fetchMessages = async (args: queryParams) => {
-  console.log(args);
   const res = await fetch(`/api/message?${queryString.stringify(args)}`);
   return res.json() as Promise<IMessageResponse>;
 };
@@ -83,9 +82,8 @@ export const Messages: React.FC<{ fileId: string }> = ({ fileId }) => {
   ]);
 
   const messages = useMemo(() => {
-    if (!queryParams.data) return [];
     return queryParams.data?.pages.flatMap((page) => page.messages);
-  }, [queryParams.data]);
+  }, [queryParams]);
 
   const loadingMessage = {
     createdAt: new Date().toISOString(),
@@ -98,12 +96,12 @@ export const Messages: React.FC<{ fileId: string }> = ({ fileId }) => {
     ),
   };
 
-  const combinedMessages = useMemo(
-    () => [...(isLoading ? [loadingMessage] : []), ...(messages ?? [])],
-    [isLoading, messages]
-  );
-
-  console.log("combineMessages", combinedMessages);
+  const combinedMessages = useMemo(() => {
+    return [
+      ...(isLoading || queryParams.isLoading ? [loadingMessage] : []),
+      ...(messages ?? []),
+    ];
+  }, [isLoading, queryParams.isLoading, messages]);
 
   return (
     <div className='flex max-h-[calc(100dvh-3.5rem-7rem)] border-zinc-200 flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch'>
@@ -131,7 +129,7 @@ export const Messages: React.FC<{ fileId: string }> = ({ fileId }) => {
               />
             );
         })
-      ) : isLoading ? (
+      ) : isLoading || queryParams.isFetching ? (
         <div className='w-full flex flex-col gap-2'>
           <Skeleton className='h-16' />
           <Skeleton className='h-16' />
