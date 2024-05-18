@@ -23,7 +23,9 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
     undefined
   );
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? "proPlanPdfUploader" : "freePlanPdfUploader"
+  );
 
   useEffect(() => {
     if (uploadThingKey) {
@@ -162,7 +164,10 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
   );
 };
 
-export const UploadButton: React.FC<{ userId: string }> = ({ userId }) => {
+export const UploadButton: React.FC<{
+  userId: string;
+  isSubscribed: boolean;
+}> = ({ userId, isSubscribed }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -179,7 +184,7 @@ export const UploadButton: React.FC<{ userId: string }> = ({ userId }) => {
       </DialogTrigger>
 
       <DialogContent>
-        <UploadDropZone userId={userId} isSubscribed />
+        <UploadDropZone userId={userId} isSubscribed={isSubscribed} />
       </DialogContent>
     </Dialog>
   );
