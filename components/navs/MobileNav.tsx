@@ -1,12 +1,18 @@
 "use client";
 
 import { logout } from "@/actions/auth";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Gem, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
-const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
+const MobileNav = ({
+  isAuth,
+  isSubscribed,
+}: {
+  isAuth: boolean;
+  isSubscribed: boolean;
+}) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
@@ -76,6 +82,15 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                   >
                     Dashboard
                   </Link>
+                </li>
+                <li>
+                  {isSubscribed ? (
+                    <Link href='/dashboard/billing'>Manage Subscription</Link>
+                  ) : (
+                    <Link href='/pricing'>
+                      Upgrade <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
+                    </Link>
+                  )}
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300' />
                 <li>

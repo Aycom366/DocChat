@@ -12,21 +12,20 @@ import Link from "next/link";
 import { Icons } from "../shared/Icons";
 import { signOut } from "@/auth";
 import { Gem } from "lucide-react";
-import { getUserSubscriptionPlan } from "@/actions/stripe";
 
 interface UserAccountNavProps {
   email: string | undefined;
   name: string;
   imageUrl: string;
+  isSubscribed: boolean;
 }
 
 const UserAccountNav = async ({
   email,
   imageUrl,
   name,
+  isSubscribed,
 }: UserAccountNavProps) => {
-  const subscriptionPlan = await getUserSubscriptionPlan();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className='overflow-visible'>
@@ -70,7 +69,7 @@ const UserAccountNav = async ({
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          {subscriptionPlan?.isSubscribed ? (
+          {isSubscribed ? (
             <Link href='/dashboard/billing'>Manage Subscription</Link>
           ) : (
             <Link href='/pricing'>

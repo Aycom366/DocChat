@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Container, MaxWidthWrapper } from "../shared";
+import { MaxWidthWrapper } from "../shared";
 import { buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { auth } from "@/auth";
 import UserAccountNav from "./userAccountNav";
 import MobileNav from "./MobileNav";
+import { getUserSubscriptionPlan } from "@/actions/stripe";
 
 export const Navbar = async () => {
   const session = await auth();
+  const subscriptionPlan = await getUserSubscriptionPlan();
 
   return (
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
@@ -17,7 +19,10 @@ export const Navbar = async () => {
             <span>DocChat.</span>
           </Link>
 
-          <MobileNav isAuth={!!session?.user} />
+          <MobileNav
+            isSubscribed={subscriptionPlan.isSubscribed}
+            isAuth={!!session?.user}
+          />
 
           <div className='hidden items-center space-x-4 sm:flex'>
             {!session?.user ? (
@@ -50,22 +55,12 @@ export const Navbar = async () => {
                 </Link>
               </>
             ) : (
-              <>
-                <Link
-                  href='/dashboard'
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Dashboard
-                </Link>
-                <UserAccountNav
-                  name={session?.user?.name ?? ""}
-                  email={session?.user?.email ?? ""}
-                  imageUrl={session?.user?.image ?? ""}
-                />
-              </>
+              <UserAccountNav
+                isSubscribed={subscriptionPlan.isSubscribed}
+                name={session?.user?.name ?? ""}
+                email={session?.user?.email ?? ""}
+                imageUrl={session?.user?.image ?? ""}
+              />
             )}
           </div>
         </div>
