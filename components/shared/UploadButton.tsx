@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-
 import Dropzone from "react-dropzone";
 import { Cloud, File, Loader2 } from "lucide-react";
 import { Progress } from "../ui/progress";
@@ -75,6 +74,21 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
         setIsUploading(true);
         const progressInterval = startSimulatedProgress();
 
+        //check to see if the file has not been uploaded already by the user
+        const fileName = acceptedFile[0].name;
+        const checkFile = await fetch(
+          `/api/file?userId=${userId}&name=${fileName}`,
+          {
+            method: "GET",
+          }
+        );
+        if (checkFile.status === 200) {
+          const file = await checkFile.json();
+          router.push(`/dashboard/${file.id}`);
+          clearInterval(progressInterval);
+          setIsUploading(false);
+        }
+
         //Immediately make a request to the server to start the upload
         const res = await startUpload(acceptedFile);
 
@@ -137,16 +151,15 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
               {isUploading && (
                 <div className='w-full mt-4 max-w-xs mx-auto'>
                   <Progress
-                    color={uploadProgress === 100 ? "bg-green-500" : ""}
                     value={uploadProgress}
                     className='h-1 w-full bg-zinc-200'
                   />
-                  {uploadProgress === 100 && (
+                  {uploadProgress === 100 ? (
                     <div className='flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2'>
                       <Loader2 className='h-3 w-3 animate-spin' />
                       Redirecting...
                     </div>
-                  )}
+                  ) : null}
                 </div>
               )}
             </label>

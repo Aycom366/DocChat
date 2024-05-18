@@ -9,6 +9,7 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { createClient } from "@supabase/supabase-js";
 import { getUserSubscriptionPlan } from "@/actions/stripe";
 import { PLANS } from "@/lib/stripe";
+import { UploadStatus } from "@prisma/client";
 
 const privateKey = process.env.SUPABASE_PRIVATE_KEY;
 if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
@@ -32,6 +33,17 @@ const middleware = async () => {
 
   // Whatever is returned here is accessible in onUploadComplete as `metadata`
   return { userId: user.user?.id, subscriptionPlan };
+};
+
+const UpdateFile = async (status: UploadStatus, fileId: string) => {
+  await prisma.file.update({
+    data: {
+      uploadStatus: status,
+    },
+    where: {
+      id: fileId,
+    },
+  });
 };
 
 const onUploadComplete = async ({
@@ -89,30 +101,6 @@ const onUploadComplete = async ({
 
     const pageAmount = pageLevelDocs.length;
 
-    /**
-     * get the subscription metadata
-     */
-    const { isSubscribed } = metadata.subscriptionPlan;
-    const isProExceeded =
-      pageAmount > PLANS.find((plan) => plan.name === "Pro")!?.pagesPerPdf;
-
-    const isFreeExceeded =
-      pageAmount > PLANS.find((plan) => plan.name === "Free")!?.pagesPerPdf;
-
-    /**
-     * checking for max page that can be uploaded for both pro and free plan
-     */
-    if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
-      await prisma.file.update({
-        data: {
-          uploadStatus: "FAILED",
-        },
-        where: {
-          id: createdFile.id,
-        },
-      });
-    }
-
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
@@ -125,24 +113,26 @@ const onUploadComplete = async ({
       queryName: "match_documents",
     });
 
-    //update the file status to success
-    await prisma.file.update({
-      data: {
-        uploadStatus: "SUCCESS",
-      },
-      where: {
-        id: createdFile.id,
-      },
-    });
+    /**
+     * get the subscription metadata
+     */
+    const { isSubscribed } = metadata.subscriptionPlan;
+    const isProExceeded =
+      pageAmount > PLANS.find((plan) => plan.name == "Pro")!?.pagesPerPdf;
+
+    const isFreeExceeded =
+      pageAmount > PLANS.find((plan) => plan.name == "Free")!?.pagesPerPdf;
+
+    /**
+     * checking for max page that can be uploaded for both pro and free plan
+     */
+    if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
+      await UpdateFile("FAILED", createdFile.id);
+    } else {
+      await UpdateFile("SUCCESS", createdFile.id);
+    }
   } catch (error) {
-    await prisma.file.update({
-      data: {
-        uploadStatus: "FAILED",
-      },
-      where: {
-        id: createdFile.id,
-      },
-    });
+    await UpdateFile("FAILED", createdFile.id);
   }
 };
 

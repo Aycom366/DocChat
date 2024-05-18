@@ -16,7 +16,6 @@ export function getAbsoluteUrl(path: string) {
   return `http://localhost:${process.env.PORT ?? 3000}${path}`;
 }
 
-
 export function constructMetadata({
   title = "Doc Chat - the SaaS for students",
   description = "Doc Chat is an open-source software to make chatting to your PDF files easy.",
@@ -51,7 +50,6 @@ export function constructMetadata({
     },
     icons,
     metadataBase: new URL("https://doc-chat-web.netlify.app"),
-    themeColor: "#FFF",
     ...(noIndex && {
       robots: {
         index: false,

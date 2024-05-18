@@ -1,3 +1,7 @@
+# TODO
+
+I need to find a way to update the file's status to success after subscribing to a plan if the pdf pages is not more than the pro plan
+
 ## Nuggets
 
 ## Vector Database
