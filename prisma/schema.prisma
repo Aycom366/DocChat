@@ -25,7 +25,7 @@ model User {
   messages      Message[] //each user will also have its own messages
 
   // The @map attribute is used to define the name of the column in the database table that corresponds to a field in your Prisma schema.
-  stipeCustomerId        String?   @unique @map(name: "stripe_customer_id")
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?   @unique @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end") //when the current subscription will end

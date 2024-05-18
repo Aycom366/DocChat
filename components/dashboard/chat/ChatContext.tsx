@@ -214,7 +214,7 @@ export const ChatProvider: React.FC<IProps> = ({ children, fileId }) => {
   });
 
   const addMessage = useCallback(() => {
-    sendMessage({ message });
+    message !== "" && sendMessage({ message });
   }, [sendMessage, message]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

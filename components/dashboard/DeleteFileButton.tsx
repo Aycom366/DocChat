@@ -20,7 +20,7 @@ export const DeleteFileButton: React.FC<{ userId: string; fileId: string }> = ({
         });
       }}
       size='sm'
-      className='w-full'
+      className='w-auto'
       variant='destructive'
     >
       {isPending ? (

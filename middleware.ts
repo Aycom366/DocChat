@@ -19,7 +19,9 @@ export default auth((req) => {
   /**
    * There is no reason to protect the API routes
    */
-  const isApiAuthRoute = apiAuthPrefix.includes(nextUrl.pathname);
+  const isApiAuthRoute = apiAuthPrefix.some((prefix) =>
+    nextUrl.pathname.startsWith(prefix)
+  );
   if (isApiAuthRoute) return;
 
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);

@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import { ChromeIcon, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { toast } from "sonner";
 
 interface IProps {
   children: React.ReactNode;
@@ -28,12 +30,14 @@ export const CardWrapper = ({
 }: IProps) => {
   async function providerLogin(provider: "github" | "google") {
     try {
-      const result = await signIn(provider, {
+      await signIn(provider, {
         callbackUrl: DEFAULT_LOGIN_REDIRECT,
       });
-      console.log("result", result);
     } catch (error) {
-      console.log("error");
+      toast.error(
+        "An error occurred while trying to sign in  with " +
+          provider.toUpperCase()
+      );
     }
   }
 
