@@ -15,7 +15,6 @@ export async function POST(request: Request) {
      * validate that this event actually came from Stripe
      * to prevent anyone from calling this endpoint to give themselves a pro plan
      */
-
     event = stripe.webhooks.constructEvent(
       body,
       signature,

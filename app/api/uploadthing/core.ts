@@ -45,7 +45,7 @@ export const ourFileRouter = {
       revalidatePath("/dashboard");
 
       try {
-        // generate some pages so pinecone can index.
+        // generate some pages so supabase can index.
         const response = await fetch(`https://utfs.io/f/${file.key}`);
         const blob = await response.blob();
 

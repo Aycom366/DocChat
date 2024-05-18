@@ -5,9 +5,13 @@ import { ILogin } from "@/schemas/login";
 import { IRegister } from "@/schemas/register";
 import { prisma } from "@/db/prisma";
 import { getUser } from "@/lib/user";
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
+
+export async function logout() {
+  await signOut();
+}
 
 export async function login(values: ILogin) {
   try {

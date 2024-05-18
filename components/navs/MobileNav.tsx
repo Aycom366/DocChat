@@ -1,16 +1,16 @@
 "use client";
 
+import { logout } from "@/actions/auth";
 import { ArrowRight, Menu } from "lucide-react";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
 
   const toggleOpen = () => setOpen((prev) => !prev);
-
   const pathname = usePathname();
 
   useEffect(() => {
@@ -79,12 +79,20 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300' />
                 <li>
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/auth/login" })}
-                    className='flex items-center w-full font-semibold'
+                  <form
+                    className='w-full'
+                    action={() => {
+                      startTransition(() => logout());
+                    }}
                   >
-                    Sign out
-                  </button>
+                    <button
+                      disabled={isPending}
+                      type='submit'
+                      className='flex items-center w-full font-semibold'
+                    >
+                      Sign out
+                    </button>
+                  </form>
                 </li>
               </>
             )}

@@ -5,7 +5,11 @@ import { prisma } from "./db/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   /**
+   * in production, auth was complaining about the host not being trusted (netlify)
    * @link https://github.com/nextauthjs/next-auth/issues/6113
+   *
+   * When deploying your application behind a reverse proxy, you’ll need to set AUTH_TRUST_HOST equal to true. This tells Auth.js to trust the X-Forwarded-Host header from the reverse proxy. Auth.js will automatically infer this to be true if we detect the environment variable indicating that your application is running on one of the supported hosting providers. Currently VERCEL and CF_PAGES (Cloudflare Pages) are supported.
+   *
    */
   trustHost: true,
 
