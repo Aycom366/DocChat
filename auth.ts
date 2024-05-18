@@ -5,6 +5,11 @@ import { prisma } from "./db/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   /**
+   * @link https://github.com/nextauthjs/next-auth/issues/6113
+   */
+  trustHost: true,
+
+  /**
    * Because prisma doesn't support edge, and we middleware are being called on the edge
    * we need to use the PrismaAdapter to make it compatible with NextAuth
    * Also the reason why we have a auth.config.ts file
