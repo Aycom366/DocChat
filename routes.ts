@@ -15,7 +15,11 @@ export const authRoutes: string[] = ["/auth/login", "/auth/register"];
  * This should always be allowed
  * @type {string[]}
  */
-export const apiAuthPrefix: string[] = ["/api/auth", "/api/uploadthing"];
+export const apiAuthPrefix: string[] = [
+  "/api/auth",
+  "/api/uploadthing",
+  "/api/webhooks",
+];
 
 /**
  * The default route to redirect to after a successful login

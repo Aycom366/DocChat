@@ -86,8 +86,6 @@ export const ourFileRouter = {
           },
         });
       } catch (error) {
-        console.error(error);
-
         await prisma.file.update({
           data: {
             uploadStatus: "FAILED",

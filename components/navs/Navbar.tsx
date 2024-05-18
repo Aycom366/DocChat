@@ -20,17 +20,17 @@ export const Navbar = async () => {
           <MobileNav isAuth={!!session?.user} />
 
           <div className='hidden items-center space-x-4 sm:flex'>
+            <Link
+              href='/pricing'
+              className={buttonVariants({
+                variant: "ghost",
+                size: "sm",
+              })}
+            >
+              Pricing
+            </Link>
             {!session?.user ? (
               <>
-                <Link
-                  href='/pricing'
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Pricing
-                </Link>
                 <Link
                   href={"/auth/login"}
                   className={buttonVariants({
