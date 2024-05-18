@@ -84,9 +84,10 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
         );
         if (checkFile.status === 200) {
           const file = await checkFile.json();
-          router.push(`/dashboard/${file.id}`);
           clearInterval(progressInterval);
           setIsUploading(false);
+          router.push(`/dashboard/${file.id}`);
+          return;
         }
 
         //Immediately make a request to the server to start the upload
@@ -151,6 +152,7 @@ const UploadDropZone: React.FC<{ isSubscribed: boolean; userId: string }> = ({
               {isUploading && (
                 <div className='w-full mt-4 max-w-xs mx-auto'>
                   <Progress
+                    color={uploadProgress === 100 ? "green" : ""}
                     value={uploadProgress}
                     className='h-1 w-full bg-zinc-200'
                   />

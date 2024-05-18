@@ -3,6 +3,18 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import type Stripe from "stripe";
 
+const updateAllFilesToSuccess = async (userId: string) => {
+  await prisma.file.updateMany({
+    where: {
+      userId,
+      uploadStatus: "FAILED",
+    },
+    data: {
+      uploadStatus: "SUCCESS",
+    },
+  });
+};
+
 export async function POST(request: Request) {
   //The text() method reads the entire request body and returns it as a string.
   const body = await request.text();
@@ -57,6 +69,8 @@ export async function POST(request: Request) {
         ),
       },
     });
+
+    await updateAllFilesToSuccess(session.metadata.userId);
   }
 
   /**
@@ -83,6 +97,8 @@ export async function POST(request: Request) {
         ),
       },
     });
+
+    await updateAllFilesToSuccess(session.metadata.userId);
   }
 
   return new Response(null, { status: 200 });
