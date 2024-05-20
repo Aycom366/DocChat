@@ -36,6 +36,11 @@ interface IPreviousMessage {
   pages: IMessageResponse[];
 }
 
+const removePrefixAndQuotes = (str: string) => {
+  // This regex matches the pattern `0: " text"`
+  return str.replace(/^\d+:\s*"\s(.*)"$/, "$1");
+};
+
 export const ChatProvider: React.FC<IProps> = ({ children, fileId }) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -134,10 +139,10 @@ export const ChatProvider: React.FC<IProps> = ({ children, fileId }) => {
         //The actual stream that open-ai gave us
         let chunkValue = decoder.decode(value);
 
-        //remove the chunk index from chunkValue
-        // chunkValue = chunkValue.replace(/^[^a-zA-Z]+/, "");
-
-        accResponse += chunkValue;
+        const matches = chunkValue.match(/(?<=")(.*?)(?=")/g);
+        if (matches) {
+          accResponse += matches.join("");
+        }
 
         //append the chunk to the actual message in realtime
         queryClient.setQueryData(

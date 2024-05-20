@@ -56,7 +56,7 @@ export async function getUserSubscriptionPlan() {
   const session = await auth();
   const user = session?.user!;
 
-  if (!user.id) {
+  if (!user?.id) {
     return {
       ...PLANS[0],
       isSubscribed: false,
