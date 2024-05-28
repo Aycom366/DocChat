@@ -1,6 +1,4 @@
-"use client";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ElementType, ReactNode } from "react";
 
@@ -13,8 +11,6 @@ export const Container = ({
   as?: ElementType;
   className?: HTMLDivElement["className"];
 }) => {
-  const pathname = usePathname();
-
   return (
     <Component
       className={cn(
@@ -23,21 +19,6 @@ export const Container = ({
       )}
     >
       {children}
-      {pathname === "/auth/login" ? (
-        <div className='flex flex-row text-sm items-center gap-1'>
-          <p>Don&apos;t have an account?</p>
-          <Link className='underline font-medium' href='/auth/register'>
-            Register
-          </Link>
-        </div>
-      ) : (
-        <div className='flex text-sm flex-row items-center gap-1'>
-          <p>Have an account?</p>
-          <Link className='underline font-medium' href='/auth/login'>
-            Log In
-          </Link>
-        </div>
-      )}
     </Component>
   );
 };

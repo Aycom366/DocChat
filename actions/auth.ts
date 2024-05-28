@@ -10,7 +10,7 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 
 export async function logout() {
-  await signOut();
+  await signOut({ redirectTo: "/auth/login" });
 }
 
 export async function login(values: ILogin) {

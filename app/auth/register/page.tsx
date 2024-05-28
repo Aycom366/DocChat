@@ -17,6 +17,7 @@ import { IRegister, RegisterSchema } from "@/schemas/register";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 
 export default function Register() {
   const [isPending, startTransition] = useTransition();
@@ -87,6 +88,13 @@ export default function Register() {
           </Button>
         </form>
       </Form>
+
+      <div className='flex text-sm flex-row items-center gap-1'>
+        <p>Have an account?</p>
+        <Link className='underline font-medium' href='/auth/login'>
+          Log In
+        </Link>
+      </div>
     </CardWrapper>
   );
 }

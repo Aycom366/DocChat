@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ILogin, LoginSchema } from "@/schemas/login";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -74,6 +75,12 @@ export default function Login() {
           </Button>
         </form>
       </Form>
+      <div className='flex flex-row text-sm items-center gap-1'>
+        <p>Don&apos;t have an account?</p>
+        <Link className='underline font-medium' href='/auth/register'>
+          Register
+        </Link>
+      </div>
     </CardWrapper>
   );
 }
