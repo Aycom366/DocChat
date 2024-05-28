@@ -15,7 +15,6 @@ export const Container = ({
 }) => {
   const pathname = usePathname();
 
-  console.log(pathname);
   return (
     <Component
       className={cn(
