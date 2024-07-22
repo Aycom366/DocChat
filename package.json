@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "next dev",
@@ -33,6 +33,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@supabase/supabase-js": "^2.43.1",
+    "@tailwindcss/typography": "^0.5.13",
     "@tanstack/react-query": "^5.35.1",
     "@uploadthing/react": "^6.7.2",
     "ai": "^3.1.5",
@@ -47,6 +48,7 @@
     "next-themes": "^0.3.0",
     "openai": "^4.45.0",
     "pdf-parse": "^1.1.1",
+    "postcss": "^8",
     "query-string": "^9.0.0",
     "react": "^18",
     "react-dom": "^18",
@@ -61,11 +63,9 @@
     "sonner": "^1.4.41",
     "stripe": "^15.6.0",
     "tailwind-merge": "^2.3.0",
-    "uploadthing": "^6.13.2",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
-    "@tailwindcss/typography": "^0.5.13",
-    "postcss": "^8",
+    "uploadthing": "^6.13.2",
     "uuid": "^9.0.1",
     "zod": "^3.23.5"
   },

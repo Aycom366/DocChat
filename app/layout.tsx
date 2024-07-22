@@ -5,11 +5,6 @@ import { cn, constructMetadata } from "@/lib/utils";
 import { Navbar } from "@/components/navs";
 import { Toaster } from "@/components/ui/sonner";
 import { TanstackProvider } from "@/providers/tanstack-query";
-import { webcrypto } from "node:crypto";
-
-// Polyfill the global crypto object
-// As stated by lucia auth
-globalThis.crypto = webcrypto as Crypto;
 
 const inter = Inter({ subsets: ["latin"] });
 
