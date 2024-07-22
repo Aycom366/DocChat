@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { PdfRenderer } from "@/components/dashboard/PdfRenderer";
 import { ChatWrapper } from "@/components/dashboard/chat/ChatWrapper";
 import { getFile } from "@/lib/file";
@@ -12,7 +12,7 @@ interface IProps {
 
 const Page = async ({ params }: IProps) => {
   const { slug } = params;
-  const session = await auth();
+  const session = await validateRequest();
   if (!session?.user) {
     return redirect("/auth/login");
   }

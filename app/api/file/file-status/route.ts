@@ -1,8 +1,8 @@
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { prisma } from "@/db/prisma";
 
 export async function GET(request: Request) {
-  const session = await auth();
+  const { user } = await validateRequest();
   const { searchParams } = new URL(request.url);
   const fileId = searchParams.get("fileId");
 
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   const file = await prisma.file.findFirst({
     where: {
-      userId: session?.user?.id,
+      userId: user?.id,
       id: fileId,
     },
   });

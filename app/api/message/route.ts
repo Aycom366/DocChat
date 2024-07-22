@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { openai } from "@/lib/openai";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
@@ -7,6 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { INFINITE_QUERY_LIMIT } from "@/lib/file";
+import { validateRequest } from "@/auth";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -14,7 +14,9 @@ export const GET = async (req: NextRequest) => {
     const cursor = req.nextUrl.searchParams.get("cursor");
     const limit = Number(req.nextUrl.searchParams.get("limit")) as number;
 
-    const session = await auth();
+    const session = await validateRequest();
+    if (!session)
+      return Response.json({ message: "Unauthorized" }, { status: 401 });
 
     const newLimit = limit ?? INFINITE_QUERY_LIMIT;
 
@@ -74,7 +76,7 @@ export const GET = async (req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const session = await auth();
+  const session = await validateRequest();
   if (!session?.user) {
     return new Response("Unauthorized", { status: 401 });
   }

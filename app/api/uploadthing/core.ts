@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { revalidatePath } from "next/cache";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
@@ -21,7 +21,7 @@ const f = createUploadthing();
 
 const middleware = async () => {
   // This code runs on your server before upload
-  const user = await auth();
+  const { user } = await validateRequest();
   // If you throw, the user will not be able to upload
   if (!user) throw new UploadThingError("Unauthorized");
 
@@ -32,7 +32,7 @@ const middleware = async () => {
   const subscriptionPlan = await getUserSubscriptionPlan();
 
   // Whatever is returned here is accessible in onUploadComplete as `metadata`
-  return { userId: user.user?.id, subscriptionPlan };
+  return { userId: user.id, subscriptionPlan };
 };
 
 const UpdateFile = async (status: UploadStatus, fileId: string) => {

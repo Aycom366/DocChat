@@ -20,7 +20,6 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  accounts      Account[]
   files         File[]
   messages      Message[] //each user will also have its own messages
 
@@ -30,34 +29,10 @@ model User {
   stripePriceId          String?   @unique @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end") //when the current subscription will end
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // In Prisma, the @@id attribute is used to define a composite primary key for a model. A composite primary key is a key that uses multiple columns in a table to form a primary key.
-
-  //@@id([provider, providerAccountId]) means that the combination of provider and providerAccountId is unique for each record in your table, and it's used as the primary key.
-
-  // This means you can't have two records with the same provider and providerAccountId. This is useful when you want to ensure that each combination of certain fields is unique.
-  @@id([provider, providerAccountId])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Session      Session[]
+  OauthAccount OauthAccount[]
 }
 
 enum UploadStatus {
@@ -65,6 +40,16 @@ enum UploadStatus {
   PROCESSING
   SUCCESS
   FAILED
+}
+
+model OauthAccount {
+  providerId     String
+  providerUserId String
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  //The unique below acts like a primary key
+  @@unique([providerId, providerUserId])
 }
 
 model File {
@@ -98,4 +83,12 @@ model Message {
   userId String?
   File   File?   @relation(fields: [fileId], references: [id])
   fileId String?
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }

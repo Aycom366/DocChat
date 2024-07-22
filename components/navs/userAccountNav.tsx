@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "../shared/Icons";
-import { signOut } from "@/auth";
 import { Gem } from "lucide-react";
+import { logout } from "@/actions/auth";
 
 interface UserAccountNavProps {
   email: string | undefined;
@@ -85,7 +85,7 @@ const UserAccountNav = async ({
             className='w-full'
             action={async () => {
               "use server";
-              await signOut();
+              await logout();
             }}
           >
             <Button

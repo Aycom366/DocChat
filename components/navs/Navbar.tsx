@@ -2,13 +2,13 @@ import Link from "next/link";
 import { MaxWidthWrapper } from "../shared";
 import { buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import UserAccountNav from "./userAccountNav";
 import MobileNav from "./MobileNav";
 import { getUserSubscriptionPlan } from "@/actions/stripe";
 
 export const Navbar = async () => {
-  const session = await auth();
+  const session = await validateRequest();
   const subscriptionPlan = await getUserSubscriptionPlan();
 
   return (

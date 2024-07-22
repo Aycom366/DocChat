@@ -1,12 +1,12 @@
-import { User } from "next-auth";
 import { UploadButton } from "../shared";
 import { Files } from "./Files";
 import { Suspense } from "react";
 import Skeleton from "react-loading-skeleton";
 import { getUserSubscriptionPlan } from "@/actions/stripe";
+import { User } from "@prisma/client";
 
 interface IProps {
-  user: User;
+  user: Partial<User>;
 }
 
 export const Dashboard = async ({ user }: IProps) => {
