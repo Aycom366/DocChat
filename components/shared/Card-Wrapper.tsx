@@ -11,9 +11,6 @@ import {
 import { Button } from "../ui/button";
 import { ChromeIcon, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { toast } from "sonner";
 
 interface IProps {
   children: React.ReactNode;
@@ -28,19 +25,6 @@ export const CardWrapper = ({
   cardContentClassNames,
   headerDescription,
 }: IProps) => {
-  async function providerLogin(provider: "github" | "google") {
-    try {
-      await signIn(provider, {
-        callbackUrl: DEFAULT_LOGIN_REDIRECT,
-      });
-    } catch (error) {
-      toast.error(
-        "An error occurred while trying to sign in  with " +
-          provider.toUpperCase()
-      );
-    }
-  }
-
   return (
     <Card className='bg-transparent w-full mx-auto max-w-[400px]'>
       <CardHeader>
@@ -55,21 +39,18 @@ export const CardWrapper = ({
         {children}
       </CardContent>
       <CardFooter className='gap-2 flex flex-col'>
-        <Button
-          onClick={() => providerLogin("github")}
-          className='w-full'
-          variant='outline'
-        >
-          <Github className='mr-2 h-4 w-4' />
-          Sign in with GitHub
+        <Button asChild className='w-full' variant='outline'>
+          <a className='' href='/auth/login/github'>
+            <Github className='mr-2 h-4 w-4' />
+            Sign in with GitHub
+          </a>
         </Button>
-        <Button
-          onClick={() => providerLogin("google")}
-          className='w-full'
-          variant='outline'
-        >
-          <ChromeIcon className='mr-2 h-4 w-4' />
-          Sign in with Google
+
+        <Button asChild className='w-full' variant='outline'>
+          <a className='' href='/auth/login/google'>
+            <ChromeIcon className='mr-2 h-4 w-4' />
+            Sign in with Google
+          </a>
         </Button>
       </CardFooter>
     </Card>

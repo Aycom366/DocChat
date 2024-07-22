@@ -97,7 +97,9 @@ const MobileNav = ({
                   <form
                     className='w-full'
                     action={() => {
-                      startTransition(() => logout());
+                      startTransition(async () => {
+                        await logout();
+                      });
                     }}
                   >
                     <button

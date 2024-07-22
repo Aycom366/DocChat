@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { MaxWidthWrapper, UpgradeButton } from "@/components/shared";
 import { PLANS } from "@/lib/stripe";
 import {
@@ -69,7 +69,7 @@ const pricingItems = [
 ];
 
 export default async function Pricing() {
-  const session = await auth();
+  const session = await validateRequest();
   return (
     <MaxWidthWrapper className='mb-8 mt-24 text-center max-w-5xl'>
       <div className='mx-auto mb-10 sm:max-w-lg'>

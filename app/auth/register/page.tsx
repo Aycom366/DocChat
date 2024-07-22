@@ -32,10 +32,9 @@ export default function Register() {
   async function onSubmit(data: IRegister) {
     startTransition(() => {
       register(data).then((response) => {
-        if (response.error) {
+        if (response?.error) {
           return toast.error(response.error);
         }
-        toast("User Created");
       });
     });
   }

@@ -1,12 +1,12 @@
 "use server";
 
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { PLANS, stripe } from "@/lib/stripe";
 import { getAbsoluteUrl } from "@/lib/utils";
 
 export const createStripeSession = async () => {
-  const session = await auth();
+  const { session } = await validateRequest();
 
   if (!session) return { error: "Not authenticated" };
 
@@ -14,7 +14,7 @@ export const createStripeSession = async () => {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: session.user?.id,
+      id: session.userId,
     },
   });
 
@@ -53,7 +53,7 @@ export const createStripeSession = async () => {
 };
 
 export async function getUserSubscriptionPlan() {
-  const session = await auth();
+  const session = await validateRequest();
   const user = session?.user!;
 
   if (!user?.id) {

@@ -1,12 +1,12 @@
-import { auth } from "@/auth";
+import { validateRequest } from "@/auth";
 import { Dashboard } from "@/components/dashboard";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await auth();
-  if (!session?.user) {
+  const { user } = await validateRequest();
+  if (!user) {
     return redirect("/auth/login");
   }
 
-  return <Dashboard user={session?.user} />;
+  return <Dashboard user={user} />;
 }
