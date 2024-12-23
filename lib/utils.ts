@@ -51,7 +51,7 @@ export function constructMetadata({
       creator: "@bamigboyeayomi5",
     },
     icons,
-    metadataBase: new URL("https://doc-chat-web.netlify.app"),
+    metadataBase: new URL("https://doc-chat-eta.vercel.app"),
     ...(noIndex && {
       robots: {
         index: false,
