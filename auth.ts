@@ -28,6 +28,7 @@ import { prisma } from "./db/prisma";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { Google, GitHub } from "arctic";
+import { getAbsoluteUrl } from "./lib/utils";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -62,8 +63,10 @@ export const lucia = new Lucia(adapter, {
 export const google = new Google(
   process.env.GOOGLE_ID!,
   process.env.GOOGLE_SECRET!,
-  `${process.env.VERCEL_URL}/api/auth/callback/google`
+  getAbsoluteUrl("/api/auth/callback/google")
 );
+
+console.log(getAbsoluteUrl("/api/auth/callback/google"));
 
 export const github = new GitHub(
   process.env.GITHUB_ID!,
