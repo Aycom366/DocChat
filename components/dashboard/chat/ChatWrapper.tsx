@@ -16,6 +16,8 @@ export const ChatWrapper: React.FC<{
     undefined | "PROCESSING" | "FAILED"
   >();
 
+  console.log("filestatus", fileStatus);
+
   /**
    * We wanna get the file status here
    * Therefore we poll the server until we get the status
@@ -76,7 +78,10 @@ export const ChatWrapper: React.FC<{
         <div className='flex-1 flex justify-center items-center flex-col mb-28'>
           <div className='flex flex-col items-center gap-2'>
             <XCircle className='h-8 w-8 text-red-500' />
-            <h3 className='font-semibold text-xl'>Too many pages in PDF</h3>
+            <h3 className='font-semibold text-xl'>
+              We couldn&apos;t get the embeddings for your PDF or the file is
+              too large
+            </h3>
             {/* <p className='text-zinc-500 text-sm'>
               Your{" "}
               <span className='font-medium'>
